@@ -28,7 +28,11 @@ echo "Generating JSON file data for OTA support..."
 
 # Helper function to extract field from JSON
 extract_field() {
+<<<<<<< HEAD
     grep "\"$1\":" "$existingOTAjson" | sed -n "s/.*\"$1\": *\"\([^\"]*\)\".*/\1/p" | xargs
+=======
+    grep -Po "\"$1\"\s*:\s*\"[^\"]*\"" "$existingOTAjson" | head -n 1 | sed -E 's/.*: \"(.*)\"/\1/'
+>>>>>>> c09ad78a (crdroid: rework `createjson.sh` (#65))
 }
 
 if [ -f $existingOTAjson ]; then
