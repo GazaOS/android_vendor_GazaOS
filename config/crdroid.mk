@@ -41,6 +41,23 @@ PRODUCT_PRODUCT_PROPERTIES += \
 PRODUCT_COPY_FILES += \
     vendor/lineage/prebuilt/common/etc/sysconfig/preinstalled-packages-platform-crdroid-product.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/preinstalled-packages-platform-crdroid-product.xml
 
+## GAPPS
+ifeq ($(WITH_GMS),true)
+$(call inherit-product-if-exists, vendor/google/gms/config.mk)
+$(call inherit-product-if-exists, vendor/google/pixel/config.mk)
+
+PRODUCT_SYSTEM_PROPERTIES += \
+     ro.crdroid.buildtype=GazaOS [Gapps]
+     BUILD_TYPE := Gapps
+
+else
+PRODUCT_SYSTEM_PROPERTIES += \
+     ro.crdroid.buildtype=GazaOS [Vanilla]
+     BUILD_TYPE := Vanilla
+
+endif
+
+
 # ColumbusService
 ifneq ($(TARGET_SUPPORTS_QUICK_TAP),false)
 PRODUCT_PACKAGES += \
