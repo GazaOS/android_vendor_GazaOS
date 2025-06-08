@@ -1,7 +1,7 @@
-name: Sync Fork with Upstream (crDroid 15.0)
+name: Sync crDroid 15.0
 
 on:
-  workflow_dispatch:     # Manual run
+  workflow_dispatch:     # Manual trigger
   schedule:
     - cron: '*/30 * * * *'  # Every 30 minutes
 
@@ -9,26 +9,26 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the forked repo
+      - name: Checkout forked repo
         uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Set up Git
+      - name: Set up Git config
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Add upstream remote
+      - name: Add upstream remote and fetch
         run: |
           git remote add upstream https://github.com/crdroidandroid/android_vendor_crdroid.git
           git fetch upstream 15.0
+          git fetch origin 15.0
 
-      - name: Compare commits
+      - name: Compare upstream and origin
         id: check
         run: |
-          git fetch origin 15.0
           upstream_hash=$(git rev-parse upstream/15.0)
           origin_hash=$(git rev-parse origin/15.0)
           echo "Upstream: $upstream_hash"
@@ -39,11 +39,14 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Merge and push changes
+      - name: Merge and Push if needed
         if: steps.check.outputs.has_changes == 'true'
         env:
           TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          git checkout 15.0
-          git merge upstream/15.0 --no-edit || true
+          git checkout -B 15.0 origin/15.0
+          git merge upstream/15.0 --no-edit || {
+            echo "❌ Merge conflict detected. Please resolve it manually.";
+            exit 1;
+          }
           git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git 15.0
