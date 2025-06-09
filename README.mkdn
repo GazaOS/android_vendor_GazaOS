@@ -1,4 +1,4 @@
-crDroid Android
+GazaOS based crDroid Android
 ===========
 
 Getting started
