@@ -3,6 +3,9 @@ $(call inherit-product-if-exists, vendor/extra/product.mk)
 $(call inherit-product-if-exists, vendor/lineage/config/crdroid.mk)
 $(call inherit-product-if-exists, vendor/addons/config.mk)
 $(call inherit-product-if-exists, vendor/certification/config.mk)
+ifeq ($(TARGET_INCLUDE_VIPERFX),true)
+$(call inherit-product-if-exists, packages/apps/ViPER4AndroidFX/config.mk)
+endif
 
 PRODUCT_BRAND ?= GazaOS
 
