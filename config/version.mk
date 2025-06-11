@@ -5,12 +5,10 @@ PRODUCT_VERSION_MINOR = 0
 CR_VERSION := 11.6
 
 # Internal version
-<<<<<<< HEAD
 LINEAGE_VERSION := GazaOS-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date +%Y%m%d)-$(LINEAGE_BUILD)-v$(CR_VERSION)-$(BUILD_TYPE)
 =======
 LINEAGE_VERSION := custom-crDroidAndroid-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date +%Y%m%d)-$(LINEAGE_BUILD)-v$(CR_VERSION)-$(BUILD_TYPE)-$(shell date +%H%M)
 
->>>>>>> 09a9e02f (vendor: append time in version file name)
 # Display version
 LINEAGE_DISPLAY_VERSION := v$(CR_VERSION)-$(shell date +%Y%m%d)
 
