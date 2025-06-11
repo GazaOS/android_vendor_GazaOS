@@ -1,4 +1,5 @@
-# Include cr.mk to Set BUILD_TYPEAdd commentMore actions
+# Include cr.mk to Set 
+BUILD_TYPE
 include vendor/lineage/config/crdroid.mk
 
 PRODUCT_VERSION_MAJOR = 15
