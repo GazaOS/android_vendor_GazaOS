@@ -16,6 +16,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
     ro.crdroid.display.version=$(LINEAGE_DISPLAY_VERSION) \
     ro.crdroid.version=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)
 
-# Include cr.mk to Set 
-BUILD_TYPE
+# Include cr.mk to Set BUILD_TYPE
 include vendor/lineage/config/crdroid.mk
