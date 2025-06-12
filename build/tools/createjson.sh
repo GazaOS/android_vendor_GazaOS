@@ -15,8 +15,8 @@
 # limitations under the License.
 #
 
+BUILDPROP="$2/system/build.prop"
 #$1=TARGET_DEVICE, $2=PRODUCT_OUT, $3=FILE_NAME
-existingOTAjson=./vendor/crDroidOTA/$1.json
 output=$2/$1.json
 
 # Cleanup old file
@@ -26,42 +26,35 @@ fi
 
 echo "Generating JSON file data for OTA support..."
 
-# Helper function to extract field from JSON
-extract_field() {
-<<<<<<< HEAD
-    grep "\"$1\":" "$existingOTAjson" | sed -n "s/.*\"$1\": *\"\([^\"]*\)\".*/\1/p" | xargs
-=======
-    grep -Po "\"$1\"\s*:\s*\"[^\"]*\"" "$existingOTAjson" | head -n 1 | sed -E 's/.*: \"(.*)\"/\1/'
->>>>>>> c09ad78a (crdroid: rework `createjson.sh` (#65))
-}
+# Fetch Basic details
+MAINTAINER=$(grep "ro.crdroid.maintainer" "$BUILDPROP" | cut -d'=' -f2)
+OEM=$(grep "ro.product.system.manufacturer" "$BUILDPROP" | cut -d'=' -f2)
+DEVICE=$(basename "$2")
 
-if [ -f $existingOTAjson ]; then
-    # Extract fields from existing JSON or leave empty
-    MAINTAINER=$(extract_field "maintainer")
-    OEM=$(extract_field "oem")
-    DEVICE=$(extract_field "device")
-    BUILDTYPE=$(extract_field "buildtype")
-    FORUM=$(extract_field "forum")
-    GAPPS=$(extract_field "gapps")
-    FIRMWARE=$(extract_field "firmware")
-    MODEM=$(extract_field "modem")
-    BOOTLOADER=$(extract_field "bootloader")
-    RECOVERY=$(extract_field "recovery")
-    PAYPAL=$(extract_field "paypal")
-    TELEGRAM=$(extract_field "telegram")
-    DT=$(extract_field "dt")
-    COMMON_DT=$(extract_field "common-dt")
-    KERNEL=$(extract_field "kernel")
-fi
+# Define fields manually or leave them empty
+BUILDTYPE="Monthly"
+FORUM=""
+GAPPS=""
+FIRMWARE=""
+MODEM=""
+BOOTLOADER=""
+RECOVERY=""
+PAYPAL=""
+TELEGRAM=""
+DT=""
+COMMON_DT=""
+KERNEL=""
 
 # Generate JSON fields
 FILENAME=$3
-VERSION=$(echo "$3" | cut -d'-' -f5 | sed 's/v//')
-V_MAX=$(echo "$VERSION" | cut -d'.' -f1)
-V_MIN=$(echo "$VERSION" | cut -d'.' -f2)
-VERSION="$V_MAX.$V_MIN"
+VERSION=$(echo "$3" | cut -d'-' -f6 | sed 's/v//')
+IFS='.' read -r V_MAX V_MIN V_PATCH <<< "$VERSION"
+if [[ -z "$V_PATCH" ]]; then
+  VERSION="$V_MAX.$V_MIN"
+else
+  VERSION="$V_MAX.$V_MIN.$V_PATCH"
+fi
 
-BUILDPROP="$2/system/build.prop"
 TIMESTAMP=$(grep "ro.system.build.date.utc" "$BUILDPROP" | cut -d'=' -f2)
 MD5=$(md5sum "$2/$3" | cut -d' ' -f1)
 SHA256=$(sha256sum "$2/$3" | cut -d' ' -f1)
@@ -76,7 +69,7 @@ cat <<EOF >$output
             "oem": "${OEM:-}",
             "device": "${DEVICE:-}",
             "filename": "$FILENAME",
-            "download": "https://sourceforge.net/projects/crdroid/files/$1/$V_MAX.x/$3/download",
+            "download": "https://sourceforge.net/projects/custom-crdroid/files/$1/$3/download",
             "timestamp": $TIMESTAMP,
             "md5": "$MD5",
             "sha256": "$SHA256",
@@ -98,10 +91,5 @@ cat <<EOF >$output
     ]
 }
 EOF
-
-if [ ! -f $existingOTAjson ]; then
-    echo "There is no official support for this device yet"
-    echo "Consider adding official support by reading the documentation at https://github.com/crdroidandroid/android_vendor_crDroidOTA/blob/15.0/README.md"
-fi
 
 echo "JSON file generation completed"
