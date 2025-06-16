@@ -47,22 +47,6 @@ PRODUCT_PACKAGES += \
     ColumbusService
 endif
 
-## GAPPSAdd commentMore actions
-ifeq ($(WITH_GMS),true)
-$(call inherit-product-if-exists, vendor/google/gms/config.mk)
-$(call inherit-product-if-exists, vendor/google/pixel/config.mk)
-
-PRODUCT_SYSTEM_PROPERTIES += \
-     ro.crdroid.buildtype=GazaOS [Gapps]
-     BUILD_TYPE := Gapps
-
-else
-PRODUCT_SYSTEM_PROPERTIES += \
-     ro.crdroid.buildtype=GazaOS [Vanilla]
-     BUILD_TYPE := Vanilla
-
-endif
-
 
 # Disable async MTE on a few processes
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
